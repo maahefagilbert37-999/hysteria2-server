@@ -4,21 +4,24 @@ RUN apk add --no-cache wget ca-certificates openssl
 
 WORKDIR /app
 
+# Télécharger Hysteria2
 RUN wget -O hysteria https://github.com/apernet/hysteria/releases/latest/download/hysteria-linux-amd64 && \
     chmod +x hysteria
 
+# Générer le certificat SSL
 RUN openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -nodes -subj "/CN=render.com"
 
-RUN echo 'listen: :443\n\
-tls:\n\
-  cert: /app/cert.pem\n\
-  key: /app/key.pem\n\
-auth:\n\
-  type: password\n\
-  password: "motdepasse123"\n\
-bandwidth:\n\
-  up: 100 mbps\n\
-  down: 100 mbps' > config.yaml
+# Créer le fichier config.yaml (version CORRIGÉE)
+RUN echo 'listen: ":443"' > config.yaml && \
+    echo 'tls:' >> config.yaml && \
+    echo '  cert: /app/cert.pem' >> config.yaml && \
+    echo '  key: /app/key.pem' >> config.yaml && \
+    echo 'auth:' >> config.yaml && \
+    echo '  type: password' >> config.yaml && \
+    echo '  password: "motdepasse123"' >> config.yaml && \
+    echo 'bandwidth:' >> config.yaml && \
+    echo '  up: 100 mbps' >> config.yaml && \
+    echo '  down: 100 mbps' >> config.yaml
 
 EXPOSE 443/udp
 
