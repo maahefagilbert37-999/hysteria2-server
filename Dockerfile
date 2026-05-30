@@ -20,6 +20,6 @@ RUN echo 'bandwidth:' >> config.yaml
 RUN echo '  up: 100 mbps' >> config.yaml
 RUN echo '  down: 100 mbps' >> config.yaml
 
-EXPOSE 443/udp
+EXPOSE 443/udppp
 
 CMD ["./hysteria", "server", "-c", "config.yaml"]
