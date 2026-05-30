@@ -1,24 +1,23 @@
 FROM alpine:latest
 
-RUN apk add --no-cache wget ca-certificates openssl
+RUN apk add --no-cache openssl
 
 WORKDIR /app
 
-# Télécharger Hysteria2 (URL CORRIGÉE)
-RUN wget -O hysteria https://github.com/apernet/hysteria/releases/download/v2.3.0/hysteria-linux-amd64 && \
-    chmod +x hysteria
+# Version simple de Hysteria2
+RUN wget -O hysteria https://github.com/apernet/hysteria/releases/download/v2.3.0/hysteria-linux-amd64 && chmod +x hysteria
 
-# Générer le certificat SSL
+# Certificat SSL
 RUN openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -nodes -subj "/CN=render.com"
 
-# Créer config.yaml
-RUN echo 'listen: ":443"' > config.yaml
-RUN echo 'tls:' >> config.yaml
-RUN echo '  cert: /app/cert.pem' >> config.yaml
-RUN echo '  key: /app/key.pem' >> config.yaml
-RUN echo 'auth:' >> config.yaml
-RUN echo '  type: password' >> config.yaml
-RUN echo '  password: "motdepasse123"' >> config.yaml
+# Configuration (une seule ligne)
+RUN echo 'listen: ":443"' > config.yaml && \
+    echo 'tls:' >> config.yaml && \
+    echo '  cert: /app/cert.pem' >> config.yaml && \
+    echo '  key: /app/key.pem' >> config.yaml && \
+    echo 'auth:' >> config.yaml && \
+    echo '  type: password' >> config.yaml && \
+    echo '  password: "motdepasse123"' >> config.yaml
 
 EXPOSE 443/udp
 
