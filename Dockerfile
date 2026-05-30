@@ -1,16 +1,11 @@
-FROM alpine:latest
-
-RUN apk add --no-cache openssl
+FROM tobyxdd/hysteria2:latest
 
 WORKDIR /app
 
-# Version simple de Hysteria2
-RUN wget -O hysteria https://github.com/apernet/hysteria/releases/download/v2.3.0/hysteria-linux-amd64 && chmod +x hysteria
-
-# Certificat SSL
+# Certificat SSL auto-signé
 RUN openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -nodes -subj "/CN=render.com"
 
-# Configuration (une seule ligne)
+# Configuration
 RUN echo 'listen: ":443"' > config.yaml && \
     echo 'tls:' >> config.yaml && \
     echo '  cert: /app/cert.pem' >> config.yaml && \
@@ -21,4 +16,4 @@ RUN echo 'listen: ":443"' > config.yaml && \
 
 EXPOSE 443/udp
 
-CMD ["./hysteria", "server", "-c", "config.yaml"]
+CMD ["hysteria-server", "-c", "config.yaml"]
