@@ -1,13 +1,12 @@
-FROM alpine:latest
+# On utilise l'image officielle du projet pingtunnel
+# Cette image est déjà construite, il n'y a rien à compiler ou à télécharger.
+FROM ghcr.io/esrrhs/pingtunnel:latest
 
-RUN apk add --no-cache wget
-
-WORKDIR /app
-
-# Télécharger pingtunnel
-RUN wget -O pingtunnel https://github.com/esrrhs/pingtunnel/releases/download/1.5/pingtunnel_linux64 && \
-    chmod +x pingtunnel
-
+# On expose le port par défaut (souvent 53 ou 5000, on laisse l'image le gérer)
 EXPOSE 53/udp
 
-CMD ["./pingtunnel", "-type", "server", "-key", "motdepasse123"]
+# On définit la commande pour lancer le serveur.
+# -type server : pour être en mode serveur
+# -key ton_mot_de_passe : pour sécuriser ta connexion (remplace "MonSuperMotDePasse")
+ENTRYPOINT ["./pingtunnel"]
+CMD ["-type", "server", "-key", "MonSuperMotDePasse"]
